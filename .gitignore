@@ -1,0 +1,65 @@
+# ---------------------------------------------------------------
+# DADOS DE NOTAS FISCAIS -- NUNCA ENVIAR PARA O REPOSITORIO
+#
+# As notas processadas contem CNPJ, valores, contratos e dados
+# bancarios de terceiros. Estas regras existem para impedir que
+# esse material seja publicado por engano.
+# ---------------------------------------------------------------
+notas/*
+!notas/.gitkeep
+
+resultado/*
+!resultado/.gitkeep
+
+planilhas/
+Para ser revisado/
+
+*.pdf
+*.xlsx
+*.xls
+*.csv
+
+# arquivos de depuracao gerados durante os testes
+debug_*.txt
+
+
+# ---------------------------------------------------------------
+# Configuracao especifica de cada maquina
+# ---------------------------------------------------------------
+config_local.py
+
+.env
+
+
+# ---------------------------------------------------------------
+# Atalhos e arquivos gerados no Windows
+# ---------------------------------------------------------------
+*.lnk
+
+Thumbs.db
+desktop.ini
+
+
+# ---------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+.venv/
+venv/
+env/
+
+build/
+dist/
+*.spec
+
+
+# ---------------------------------------------------------------
+# Editores
+# ---------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
