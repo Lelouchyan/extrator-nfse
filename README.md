@@ -1,113 +1,113 @@
-# Extrator de NFS-e
+# NFS-e Extractor
 
-Extrai automaticamente os dados de notas fiscais de serviço eletrônicas (NFS-e) em PDF e consolida tudo em uma planilha Excel.
+Automatically extracts data from Brazilian electronic service invoices (NFS-e) in PDF format and consolidates everything into an Excel spreadsheet.
 
-Lê tanto PDFs com texto quanto notas digitalizadas (imagem), usando OCR.
+Reads both text-based PDFs and scanned invoices (images), using OCR.
 
-## O que ele faz
+## What it does
 
-A partir de uma pasta com PDFs de notas, o programa gera uma planilha com uma linha por nota, contendo número, datas, prestador, tomador, município, valores, tributos e as informações extraídas da descrição do serviço (medição, contrato, período, lote).
+Given a folder of invoice PDFs, the program generates a spreadsheet with one row per invoice, containing the invoice number, dates, service provider, customer, municipality, amounts, taxes, and the information extracted from the service description (measurement, contract, period, lot).
 
-A planilha traz ainda uma coluna **revisar**, que sinaliza as notas em que a leitura pode ter falhado — campo obrigatório vazio ou código de autenticidade incompleto. Essas linhas ficam destacadas em amarelo para conferência manual.
+The spreadsheet also includes a **revisar** (review) column, which flags invoices where the reading may have failed — a required field left empty or an incomplete authenticity code. These rows are highlighted in yellow for manual checking.
 
-### Modelos de nota suportados
+### Supported invoice formats
 
-| Modelo | Exemplos |
+| Format | Examples |
 |---|---|
-| Padrão nacional (DANFSe) | Rio de Janeiro |
-| Padrão ABRASF municipal | Goiânia, Aparecida de Goiânia |
+| National standard (DANFSe) | Rio de Janeiro |
+| Municipal ABRASF standard | Goiânia, Aparecida de Goiânia |
 
-O programa identifica o modelo sozinho, nota por nota — um mesmo PDF pode conter os dois.
+The program identifies the format on its own, invoice by invoice — a single PDF may contain both.
 
-## Instalação
+## Installation
 
 ### 1. Python
 
-Instale o [Python 3.10 ou superior](https://www.python.org/downloads/). No Windows, marque a opção **"Add Python to PATH"** durante a instalação.
+Install [Python 3.10 or higher](https://www.python.org/downloads/). On Windows, check the **"Add Python to PATH"** option during installation.
 
-### 2. Tesseract (obrigatório)
+### 2. Tesseract (required)
 
-O Tesseract é o motor de OCR, usado para ler as notas digitalizadas. Ele é um programa à parte e precisa ser instalado separadamente.
+Tesseract is the OCR engine used to read scanned invoices. It is a separate program and must be installed on its own.
 
-- **Windows:** baixe em [UB-Mannheim/tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
+- **Windows:** download from [UB-Mannheim/tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
 - **Linux:** `sudo apt install tesseract-ocr tesseract-ocr-por`
 - **macOS:** `brew install tesseract tesseract-lang`
 
-> **Importante:** durante a instalação no Windows, em *Additional language data*, marque o idioma **Portuguese**. Sem ele o OCR não funciona.
+> **Important:** during installation on Windows, under *Additional language data*, select the **Portuguese** language. OCR will not work without it.
 
-O programa encontra o Tesseract sozinho nos locais de instalação padrão. Se você instalou em outro lugar, crie a variável de ambiente `TESSERACT_PATH` apontando para o `tesseract.exe`.
+The program locates Tesseract on its own in the default installation paths. If you installed it elsewhere, create a `TESSERACT_PATH` environment variable pointing to `tesseract.exe`.
 
-### 3. Dependências do projeto
+### 3. Project dependencies
 
-Na pasta do projeto:
+In the project folder:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Como usar
+## Usage
 
-### Com janela (recomendado)
+### With the graphical interface (recommended)
 
 ```bash
 python interface.py
 ```
 
-Adicione os PDFs pelos botões e clique em **Gerar Excel**. A planilha é salva em `resultado/`.
+Add the PDFs using the buttons and click **Gerar Excel** (Generate Excel). The spreadsheet is saved to `resultado/`.
 
-Para criar um atalho na Área de Trabalho e não precisar mais do terminal, rode uma vez:
+To create a Desktop shortcut and stop needing the terminal, run this once:
 
 ```bash
 python criar_atalho.py
 ```
 
-Para arrastar e soltar os arquivos na janela, instale também `tkinterdnd2` (opcional — sem ele os botões funcionam normalmente).
+For drag-and-drop support in the window, also install `tkinterdnd2` (optional — the buttons work fine without it).
 
-### Pela linha de comando
+### From the command line
 
-Coloque os PDFs na pasta `notas/` e rode:
+Place the PDFs in the `notas/` folder and run:
 
 ```bash
 python main.py
 ```
 
-## Estrutura do projeto
+## Project structure
 
 ```
-main.py               execução por linha de comando
-interface.py          interface gráfica
-criar_atalho.py       cria o atalho na Área de Trabalho
-config.py             caminhos e localização do Tesseract
+main.py               command-line entry point
+interface.py          graphical interface
+criar_atalho.py       creates the Desktop shortcut
+config.py             paths and Tesseract detection
 
-processador.py        percorre os PDFs página a página
-leitor_pdf.py         decide entre texto nativo e OCR
-ocr.py                OCR das páginas digitalizadas
-ocr_utils.py          tolerância a erros comuns de OCR
+processador.py        walks through the PDFs page by page
+leitor_pdf.py         chooses between native text and OCR
+ocr.py                OCR for scanned pages
+ocr_utils.py          tolerance for common OCR errors
 
-normalizador.py       padroniza o texto (acentos, espaços)
-limpeza.py            limpeza de quebras de linha
-parser_nfse.py        identifica o modelo e divide em blocos
-extrator.py           campos do modelo municipal
-extrator_nacional.py  campos do modelo nacional
-interpretador.py      lê medição, contrato, período e lote
-nota_fiscal.py        junta tudo em uma nota
+normalizador.py       standardizes the text (accents, spacing)
+limpeza.py            line-break cleanup
+parser_nfse.py        identifies the format and splits it into blocks
+extrator.py           fields for the municipal format
+extrator_nacional.py  fields for the national format
+interpretador.py      reads measurement, contract, period and lot
+nota_fiscal.py        assembles everything into one invoice
 
-excel.py              gera a planilha e marca o que revisar
+excel.py              generates the spreadsheet and flags what to review
 ```
 
-## Aviso sobre os dados
+## Note on data
 
-As pastas `notas/` e `resultado/` **não são versionadas**. Notas fiscais contêm CNPJ, valores, contratos e dados bancários de terceiros, e não devem ser publicadas.
+The `notas/` and `resultado/` folders are **not version-controlled**. Invoices contain tax IDs, amounts, contracts and third-party banking details, and must not be published.
 
-Antes de subir qualquer alteração, confira que nenhum PDF ou planilha real está sendo incluído no commit.
+Before pushing any changes, verify that no real PDF or spreadsheet is included in the commit.
 
-## Limitações conhecidas
+## Known limitations
 
-- O OCR pode errar dígitos em notas de baixa qualidade. Por isso existe a coluna `revisar` — **os valores devem ser conferidos por amostragem** antes de qualquer uso formal.
-- O código de autenticidade às vezes é lido com 49 dígitos em vez de 50, quando o OCR perde um caractere na imagem. Essas notas ficam marcadas.
-- Quando o número da nota não pode ser lido no cabeçalho, ele é deduzido do código de autenticidade. É uma inferência baseada no padrão observado, e não uma regra oficial documentada.
-- Apenas os dois modelos citados acima são suportados. Outros layouts municipais exigem um extrator próprio.
+- OCR may misread digits on low-quality invoices. That is why the `revisar` column exists — **values should be spot-checked** before any formal use.
+- The authenticity code is sometimes read with 49 digits instead of 50, when OCR loses a character in the image. Those invoices are flagged.
+- When the invoice number cannot be read from the header, it is inferred from the authenticity code. This is an inference based on an observed pattern, not an officially documented rule.
+- Only the two formats listed above are supported. Other municipal layouts would require their own extractor.
 
-## Licença
+## License
 
-Uso pessoal e educacional.
+Personal and educational use.
